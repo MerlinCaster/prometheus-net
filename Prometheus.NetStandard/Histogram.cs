@@ -83,16 +83,30 @@ namespace Prometheus
                 // We output count.
                 // We output each bucket in order of increasing upper bound.
 
-                serializer.WriteMetric(_sumIdentifier, _sum.Value);
-                serializer.WriteMetric(_countIdentifier, _bucketCounts.Sum(b => b.Value));
-
                 var cumulativeCount = 0L;
+
+                if (this._timestamp == 0)
+                {
+                    serializer.WriteMetric(_sumIdentifier, _sum.Value);
+                    serializer.WriteMetric(_countIdentifier, _bucketCounts.Sum(b => b.Value));
+
+                    for (var i = 0; i < _bucketCounts.Length; i++)
+                    {
+                        cumulativeCount += _bucketCounts[i].Value;
+
+                        serializer.WriteMetric(_bucketIdentifiers[i], cumulativeCount);
+                    }
+                    return;
+                }
+
+                serializer.WriteMetric(_sumIdentifier, _sum.Value, this._timestamp);
+                serializer.WriteMetric(_countIdentifier, _bucketCounts.Sum(b => b.Value), this._timestamp);
 
                 for (var i = 0; i < _bucketCounts.Length; i++)
                 {
                     cumulativeCount += _bucketCounts[i].Value;
 
-                    serializer.WriteMetric(_bucketIdentifiers[i], cumulativeCount);
+                    serializer.WriteMetric(_bucketIdentifiers[i], cumulativeCount, this._timestamp);
                 }
             }
 

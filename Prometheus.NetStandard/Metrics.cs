@@ -14,6 +14,8 @@
         /// </summary>
         public static CollectorRegistry DefaultRegistry { get; private set; }
 
+        public static bool WriteTimestamp { get; set; }
+
         private static MetricFactory _defaultFactory;
 
         /// <summary>

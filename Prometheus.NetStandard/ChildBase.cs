@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 
 namespace Prometheus
@@ -26,6 +27,10 @@ namespace Prometheus
         public void Publish()
         {
             Volatile.Write(ref _publish, true);
+            if (Metrics.WriteTimestamp)
+            {
+                _timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            }
         }
 
         private readonly Collector _parent;
@@ -33,6 +38,7 @@ namespace Prometheus
 
         private bool _publish;
 
+        protected long _timestamp;
         /// <summary>
         /// Collects all the metric data rows from this collector and serializes it using the given serializer.
         /// </summary>

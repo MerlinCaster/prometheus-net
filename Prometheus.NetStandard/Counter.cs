@@ -18,7 +18,14 @@ namespace Prometheus
 
             private protected override void CollectAndSerializeImpl(IMetricsSerializer serializer)
             {
-                serializer.WriteMetric(_identifier, Value);
+                if (this._timestamp == 0)
+                {
+                    serializer.WriteMetric(_identifier, Value);
+                }
+                else
+                {
+                    serializer.WriteMetric(_identifier, Value, this._timestamp);
+                }
             }
 
             public void Inc(double increment = 1.0)

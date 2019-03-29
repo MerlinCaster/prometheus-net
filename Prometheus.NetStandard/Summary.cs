@@ -154,11 +154,26 @@ namespace Prometheus
                     }
                 }
 
-                serializer.WriteMetric(_sumIdentifier, sum);
-                serializer.WriteMetric(_countIdentifier, count);
+                if (this._timestamp == 0)
+                {
+                    serializer.WriteMetric(_sumIdentifier, sum);
+                    serializer.WriteMetric(_countIdentifier, count);
+
+                    for (var i = 0; i < values.Count; i++)
+                    {
+                        serializer.WriteMetric(_quantileIdentifiers[i], values[i].value);
+                    }
+                    return;
+                }
+
+                serializer.WriteMetric(_sumIdentifier, sum, this._timestamp);
+                serializer.WriteMetric(_countIdentifier, count, this._timestamp);
 
                 for (var i = 0; i < values.Count; i++)
-                    serializer.WriteMetric(_quantileIdentifiers[i], values[i].value);
+                {
+                    serializer.WriteMetric(_quantileIdentifiers[i], values[i].value, this._timestamp);
+                }
+
             }
 
             // Objectives defines the quantile rank estimates with their respective
