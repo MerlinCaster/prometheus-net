@@ -19,5 +19,15 @@
         /// Writes a single metric in a metric family.
         /// </summary>
         void WriteMetric(byte[] identifier, double value);
+
+        /// <summary>
+        /// Writes a single metric in a metric family with timestamp.
+        /// </summary>
+        void WriteMetric(byte[] identifier, double value, long timestamp);
+
+        /// <summary>
+        /// Writes a single metric in a metric family with timestamp preconverted.
+        /// </summary>
+        void WriteMetric(byte[] identifier, double value, byte[] timestamp, int numBytes);
     }
 }

@@ -75,5 +75,46 @@ namespace Prometheus
             _stream.Value.Write(_stringBytesBuffer, 0, numBytes);
             _stream.Value.WriteByte(NewLine);
         }
+
+        // name{labelkey1="labelvalue1",labelkey2="labelvalue2"} 123.456 timestamp
+        public void WriteMetric(byte[] identifier, double value, long timestamp)
+        {
+            _stream.Value.Write(identifier, 0, identifier.Length);
+            _stream.Value.WriteByte(Space);
+
+            var valueAsString = value.ToString(CultureInfo.InvariantCulture);
+
+            var numBytes = PrometheusConstants.ExportEncoding
+                .GetBytes(valueAsString, 0, valueAsString.Length, _stringBytesBuffer, 0);
+
+            _stream.Value.Write(_stringBytesBuffer, 0, numBytes);
+            _stream.Value.WriteByte(Space);
+
+            valueAsString = timestamp.ToString(CultureInfo.InvariantCulture);
+
+            numBytes = PrometheusConstants.ExportEncoding.GetBytes(valueAsString, 0, valueAsString.Length, _stringBytesBuffer, 0);
+            _stream.Value.Write(_stringBytesBuffer, 0, numBytes);
+
+            _stream.Value.WriteByte(NewLine);
+        }
+
+        // name{labelkey1="labelvalue1",labelkey2="labelvalue2"} 123.456 timestamp
+        public void WriteMetric(byte[] identifier, double value, byte[] timestamp, int timestampLength)
+        {
+            _stream.Value.Write(identifier, 0, identifier.Length);
+            _stream.Value.WriteByte(Space);
+
+            var valueAsString = value.ToString(CultureInfo.InvariantCulture);
+
+            var numBytes = PrometheusConstants.ExportEncoding
+                .GetBytes(valueAsString, 0, valueAsString.Length, _stringBytesBuffer, 0);
+
+            _stream.Value.Write(_stringBytesBuffer, 0, numBytes);
+            _stream.Value.WriteByte(Space);
+
+            _stream.Value.Write(timestamp, 0, timestampLength);
+
+            _stream.Value.WriteByte(NewLine);
+        }
     }
 }
