@@ -16,6 +16,8 @@ namespace Prometheus
     /// </remarks>
     public sealed class CollectorRegistry
     {
+        private readonly ConcurrentBag<Action<IMetricsSerializer>> _customSerializers = new ConcurrentBag<Action<IMetricsSerializer>>();
+
         /// <summary>
         /// Registers an action to be called before metrics are collected.
         /// This enables you to do last-minute updates to metric values very near the time of collection.
@@ -104,8 +106,16 @@ namespace Prometheus
             foreach (var callback in _beforeCollectCallbacks)
                 callback();
 
+            foreach (var callback in _customSerializers)
+                callback(serializer);
+
             foreach (var collector in _collectors.Values)
                 collector.CollectAndSerialize(serializer);
+        }
+
+        public void AddCustomSerializeCallback(Action<IMetricsSerializer> action)
+        {
+            _customSerializers.Add(action);
         }
     }
 }

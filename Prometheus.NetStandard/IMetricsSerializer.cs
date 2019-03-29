@@ -8,7 +8,7 @@
     /// <remarks>
     /// Public only for testing purposes.
     /// </remarks>
-    internal interface IMetricsSerializer
+    public interface IMetricsSerializer
     {
         /// <summary>
         /// Writes the lines that declare the metric family.
